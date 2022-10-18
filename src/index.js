@@ -1,14 +1,12 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom/client'
-import TodoList from './TodoList'
-import { Provider } from 'react-redux'
-import store from './store'
-
-const App = (
-    <Provider store={store}>
-        <TodoList />
-    </Provider>
-)
+import App from './App'
+import { GlobalStyle } from './style'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(App)
+root.render(
+    <Fragment>
+        <GlobalStyle />
+        <App />
+    </Fragment>
+)
