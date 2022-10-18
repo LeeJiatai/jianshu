@@ -36,7 +36,7 @@ class TodoList extends Component {
                     style={{marginTop: '20px', width: '600px'}}
                     bordered
                     dataSource={list}
-                    renderItem={item => <List.Item>{item}</List.Item>}
+                    renderItem={(item, index) => <List.Item onClick={this.deleteItem.bind(this, index)}>{item}</List.Item>}
                 />
             </div>
         )
@@ -48,6 +48,15 @@ class TodoList extends Component {
             type: 'change_input_value',
             value
         }
+        store.dispatch(action)
+    }
+
+    deleteItem(index) {
+        const action = {
+            type: 'delete_todo_item',
+            index
+        }
+
         store.dispatch(action)
     }
 
