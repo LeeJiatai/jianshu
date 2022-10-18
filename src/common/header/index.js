@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { CSSTransition } from 'react-transition-group'
+import { connect } from 'react-redux'
+import { changeInputFocus } from '../../store/actionsCreators'
 import {
     HeaderWrapper,
     Logo,
@@ -12,19 +14,8 @@ import {
 } from './style'
 
 class Header extends Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            focused: false
-        }
-
-        this.handleFocus = this.handleFocus.bind(this)
-        this.handleBlur = this.handleBlur.bind(this)
-    }
-
     render() {
-        const { focused } = this.state
+        const { focused, handleFocus, handleBlur } = this.props
         return (
             <HeaderWrapper>
                 <Logo />
@@ -42,8 +33,8 @@ class Header extends Component {
                             classNames="slide"
                         >
                             <NavSearch
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
                                 className={focused ? 'focused' : ''}
                             ></NavSearch>
                         </CSSTransition>
@@ -60,18 +51,26 @@ class Header extends Component {
             </HeaderWrapper>
         )
     }
+}
 
-    handleFocus() {
-        this.setState(() => ({
-            focused: true
-        }))
-    }
-
-    handleBlur() {
-        this.setState(() => ({
-            focused: false
-        }))
+const mapStateToProps = (state) => {
+    return {
+        focused: state.focused
     }
 }
 
-export default Header
+const mapDispatchToProps = (dispatch) => {
+    return {
+        handleFocus() {
+            const action = changeInputFocus(true)
+            dispatch(action)
+        },
+
+        handleBlur() {
+            const action = changeInputFocus(false)
+            dispatch(action)
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header)
