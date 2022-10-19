@@ -10,12 +10,17 @@ import {
     NavSearch,
     Addtion,
     Button,
-    SearchWrapper
+    SearchWrapper,
+    SearchInfo,
+    SearchInfoTitle,
+    SearchSwitch,
+    SearchInfoList,
+    SearchInfoItem
 } from './style'
 
 class Header extends Component {
     render() {
-        const { focused, handleFocus, handleBlur } = this.props
+        const { focused, handleFocus, handleBlur, list } = this.props
         return (
             <HeaderWrapper>
                 <Logo />
@@ -33,12 +38,14 @@ class Header extends Component {
                             classNames="slide"
                         >
                             <NavSearch
-                                onFocus={handleFocus}
+                                onFocus={() => handleFocus(list)}
                                 onBlur={handleBlur}
                                 className={focused ? 'focused' : ''}
                             ></NavSearch>
                         </CSSTransition>
-                        <i className={focused ? 'iconfont focused' : 'iconfont'}>&#xe614;</i>
+                        <i className={focused ? 'iconfont focused search' : 'iconfont search'}>&#xe614;</i>
+
+                        { this.getListArea() }
                     </SearchWrapper>
                 </Nav>
 
@@ -51,24 +58,94 @@ class Header extends Component {
             </HeaderWrapper>
         )
     }
+
+    getListArea() {
+        const { focused, list, currentPage, totalPage, handleMoveEnter, handleMoveleave, mouseIn, handleChangePage }  = this.props
+        const newList = list.toJS()
+        const showList = []
+
+        if (newList.length) {
+            for (let i = (currentPage - 1) * 5; i < currentPage * 5; i++) {
+                showList.push(
+                    <SearchInfoItem key={ newList[i] }>{ newList[i] }</ SearchInfoItem>
+                )
+            }
+        }
+        
+        if (focused || mouseIn) {
+            return (
+                <SearchInfo
+                    onMouseEnter={handleMoveEnter}
+                    onMouseLeave={handleMoveleave}
+                >
+                    <SearchInfoTitle>
+                        热门搜索
+                        <SearchSwitch
+                            onClick={() => handleChangePage(currentPage, totalPage, this.spinIcon)}
+                        >
+                            <i
+                                ref={(icon) => { this.spinIcon = icon}}
+                                className='iconfont'
+                            >&#xe614;</i>
+                            换一换
+                        </SearchSwitch>
+                    </SearchInfoTitle>
+
+                    <SearchInfoList>
+                        {
+                            showList
+                        }
+                    </SearchInfoList>
+                </SearchInfo>
+            )
+        } else {
+            return null
+        }
+    }
 }
 
 const mapStateToProps = (state) => {
     return {
-        // focused: state.get('header').get('focused')
-        focused: state.getIn(['header', 'focused'])
+        focused: state.getIn(['header', 'focused']),
+        list: state.getIn(['header', 'list']),
+        totalPage: state.getIn(['header', 'totalPage']),
+        currentPage: state.getIn(['header', 'currentPage']),
+        mouseIn: state.getIn(['header', 'mouseIn'])
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        handleFocus() {
+        handleFocus(list) {
+            if (!list.size) {
+                dispatch(actionCreators.getList())
+            }
             const action = actionCreators.changeInputFocus(true)
             dispatch(action)
         },
 
         handleBlur() {
             const action = actionCreators.changeInputFocus(false)
+            dispatch(action)
+        },
+
+        handleMoveEnter() {
+            const action = actionCreators.changeMouse(true)
+            dispatch(action)
+        },
+
+        handleMoveleave() {
+            const action = actionCreators.changeMouse(false)
+            dispatch(action)
+        },
+
+        handleChangePage(currentPage, totalPage, spin) {
+            let originAngle = spin.style.transform.replace(/[^0-9]/ig, '')
+            originAngle = originAngle ? parseInt(originAngle) : 0
+            const nextAngle = originAngle + 360
+            spin.style.transform = `rotate(${nextAngle}deg)`
+            const nextPage = currentPage >= totalPage ? 1 : currentPage + 1
+            const action = actionCreators.changePage(nextPage)
             dispatch(action)
         }
     }
