@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
-import { changeInputFocus } from '../../store/actionsCreators'
+import { actionCreators } from './store'
 import {
     HeaderWrapper,
     Logo,
@@ -55,19 +55,20 @@ class Header extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        focused: state.header.focused
+        // focused: state.get('header').get('focused')
+        focused: state.getIn(['header', 'focused'])
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         handleFocus() {
-            const action = changeInputFocus(true)
+            const action = actionCreators.changeInputFocus(true)
             dispatch(action)
         },
 
         handleBlur() {
-            const action = changeInputFocus(false)
+            const action = actionCreators.changeInputFocus(false)
             dispatch(action)
         }
     }

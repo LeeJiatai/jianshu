@@ -1,18 +1,16 @@
-import { CHANGE_FOCUS } from '../../../store/actionTypes'
+import { CHANGE_FOCUS } from './constants'
+import { fromJS } from 'immutable'
 
-const defaultState = {
+const defaultState = fromJS({
     focused: false
-}
+})
 
 export default function fn(state = defaultState, action) {
     const { type, value } = action
-    const newState = JSON.parse(JSON.stringify(state))
     switch (type) {
         case CHANGE_FOCUS:
-            newState.focused = value
-            break;
+            return state.set('focused', value)
         default:
+            return state
     }
-
-    return newState
 }
