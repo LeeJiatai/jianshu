@@ -18,7 +18,7 @@ export const HomeLeft = styled.div`
 `
 
 export const HomeRight = styled.div`
-    width: 240px;
+    width: 280px;
     float: right;
     margin-left: 15px;
     padding-top: 30px;
@@ -81,4 +81,27 @@ export const ListInfo = styled.div`
         font-size: 13px;
         line-height: 18px;
     }
+`
+
+export const RecommenWrapper = styled.div`
+    margin: 30px 0;
+    width: 280px;
+`
+
+export const RecommendItem = styled.div`
+    width: 280px;
+    height: 50px;
+    margin-bottom: 10px;
+    background: url(${(props) => props.url});
+    background-size: cover;
+    border-radius: 8px;
+`
+
+export const WriterWrapper = styled.div`
+    width: 278px;
+    border: 1px solid #dcdcdc;
+    border-radius: 3px;
+    height: 300px;
+    line-height: 300px;
+    text-align: center;
 `
