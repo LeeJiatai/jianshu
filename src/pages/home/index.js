@@ -4,15 +4,23 @@ import List from './components/List'
 import Recommend from './components/Recommend'
 import Writer from './components/Writer'
 import { connect } from 'react-redux'
-import { getHomeInfo } from './store/actionCreators'
+import { getHomeInfo, toggleTopShow } from './store/actionCreators'
 import {
     HomeWrapper,
     HomeLeft,
-    HomeRight
+    HomeRight,
+    BackTop
 } from './style'
 
 class Home extends Component {
+    constructor(props) {
+        super(props)
+
+        this.handleScrollTop = this.handleScrollTop.bind(this)
+    }
+
     render() {
+        const { showScroll } = this.props
         return (
             <HomeWrapper>
                 <HomeLeft>
@@ -25,12 +33,38 @@ class Home extends Component {
                     <Recommend></Recommend>
                     <Writer></Writer>
                 </HomeRight>
+                {
+                    showScroll ?
+                    <BackTop
+                        onClick={this.handleScrollTop}
+                    >back</BackTop> : null
+                }
+                
             </HomeWrapper>
         )
     }
 
+    handleScrollTop() {
+        window.scrollTo(0, 0)
+    }
+
+    bindEvents() {
+        window.addEventListener('scroll', this.props.changeScrollTopShow)
+    }
+
     componentDidMount() {
         this.props.changeHomeData()
+        this.bindEvents()
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.props.changeScrollTopShow)
+    }
+}
+
+const mapStateToProps = (state) => {
+    return {
+        showScroll: state.getIn(['home', 'showScroll'])
     }
 }
 
@@ -38,7 +72,12 @@ const mapDispatch = (dispatch) => ({
     changeHomeData() {
         const action = getHomeInfo()
         dispatch(action)
+    },
+
+    changeScrollTopShow() {
+        const scrollTop = document.documentElement.scrollTop
+        dispatch(toggleTopShow(scrollTop > 400))
     }
 })
 
-export default connect(null, mapDispatch)(Home)
+export default connect(mapStateToProps, mapDispatch)(Home)
