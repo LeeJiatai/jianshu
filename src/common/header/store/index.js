@@ -6,4 +6,4 @@ export {
     reducer,
     actionCreators,
     constants
- }
+}
